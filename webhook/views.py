@@ -2,6 +2,7 @@ from django.http import HttpResponse
 from rest_framework import status
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
+from .tasks import process_agreement_changes
 
 
 def index(request):
@@ -9,7 +10,8 @@ def index(request):
 
 @api_view(['POST'])
 def subscribe_soda_agreement(request):
-    # TODO: handle agreement changes
+    print("Receiving soda agreement changes event")
+    process_agreement_changes.delay()
     return Response(status=status.HTTP_200_OK)
 
 @api_view(['POST'])

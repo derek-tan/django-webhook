@@ -1,0 +1,28 @@
+version: '3.8'
+ 
+services:
+  app:
+    build:
+      context: .
+    ports:
+      - "8000:8000"
+    volumes:
+      - .:/app
+    command: >
+      sh -c "python3 manage.py migrate &&
+             python3 manage.py runserver"
+    depends_on:
+      - celery
+
+  redis:
+    image: redis:alpine
+
+  celery:
+    restart: always
+    build:
+      context: .
+    command: celery -A project_zero worker -l info
+    volumes:
+      - .:/app
+    depends_on:
+      - redis
